@@ -8,7 +8,7 @@ DROP TABLE centros CASCADE CONSTRAINTS;
 
 CREATE TABLE centros
   (
-    idCentro  VARCHAR2 (30) NOT NULL,
+    idCentro  NUMBER (3) NOT NULL,
     nombre    VARCHAR2 (30) NOT NULL ,
     calle     VARCHAR2 (30) NOT NULL,
     numero    NUMBER (2) NOT NULL,
@@ -22,6 +22,7 @@ CREATE TABLE centros
   
 CREATE TABLE trabajadores
   (
+    idTrab    NUMBER(3) ,
     dni       VARCHAR2 (9) NOT NULL,
     jefe      VARCHAR2(9) NOT NULL,
     nombre    VARCHAR2 (30) NOT NULL ,
@@ -38,7 +39,7 @@ CREATE TABLE trabajadores
     categoria VARCHAR2(10) NOT NULL,
     centro VARCHAR2(30) NOT NULL,
     usuario VARCHAR2(20) NOT NULL,
-    CONSTRAINT pk_trabajadores PRIMARY KEY (dni),
+    CONSTRAINT pk_trabajadores PRIMARY KEY (idTrab),
     CONSTRAINT fk_centros_id FOREIGN KEY (centro)
       REFERENCES centros(idCentro),
     CONSTRAINT ckCategoria CHECK (categoria IN ('Logistica','Administracion'))
@@ -46,26 +47,28 @@ CREATE TABLE trabajadores
   
 CREATE TABLE usuarios
   (
+    idUsuario NUMBER (3) ,
     usuario VARCHAR2(20) NOT NULL,
     pass VARCHAR2 (35) NOT NULL,
     trabajador VARCHAR2 (9) NOT NULL,
     
-    CONSTRAINT pf_usuario PRIMARY KEY (usuario),
-    CONSTRAINT fk_trabajadores_dni FOREIGN KEY (trabajador)
-      REFERENCES trabajadores(dni)
+    CONSTRAINT pf_usuario PRIMARY KEY (idUsuario),
+    CONSTRAINT fk_trabajadores_id FOREIGN KEY (trabajador)
+      REFERENCES trabajadores(idTrab)
   );
 
 CREATE TABLE vehiculos
   (
+    idVehiculo NUMBER(3),
     matricula VARCHAR2(7) NOT NULL,
     
-    CONSTRAINT pk_vehiculo PRIMARY KEY (matricula)
+    CONSTRAINT pk_vehiculo PRIMARY KEY (idVehiculo)
   );
   
   
 CREATE TABLE partes
   (
-    idParte  VARCHAR2(30) NOT NULL,
+    idParte  NUMBER(3) ,
     fecha DATE NOT NULL,
     kmInicio NUMBER(4) NOT NULL,
     kmFinal NUMBER(4) NOT NULL,
@@ -76,23 +79,23 @@ CREATE TABLE partes
     trabajador VARCHAR2(9) NOT NULL,
     vehiculo VARCHAR2(7) NOT NULL,
     CONSTRAINT pk_partes PRIMARY KEY (idParte),
-    CONSTRAINT fk_dni_traba FOREIGN KEY (trabajador)
-      REFERENCES trabajadores(dni),
-    CONSTRAINT fk_matri_vehiculo FOREIGN KEY (vehiculo)
-      REFERENCES vehiculos(matricula),
+    CONSTRAINT fk_id_traba FOREIGN KEY (trabajador)
+      REFERENCES trabajadores(idTrab),
+    CONSTRAINT fk_id_vehiculo FOREIGN KEY (vehiculo)
+      REFERENCES vehiculos(idVehiculo),
     CONSTRAINT ck_kilometros CHECK (kmInicio < kmFinal)
   );
   
 CREATE TABLE albaranes
   (
-    idAlbaran VARCHAR2(30) NOT NULL,
+    idAlbaran NUMBER(3) NOT NULL,
     horaSalida VARCHAR2(10) NOT NULL,
     horaLlegada VARCHAR2(10) NOT NULL,
     matricula VARCHAR2(7) NOT NULL,
     parte VARCHAR2(30) NOT NULL,
     CONSTRAINT pk_albaranes PRIMARY KEY (idAlbaran),
-    CONSTRAINT fk_vehiculos_matricula FOREIGN KEY (matricula)
-      REFERENCES vehiculos(matricula),
+    CONSTRAINT fk_vehiculos_id FOREIGN KEY (matricula)
+      REFERENCES vehiculos(idVehiculo),
     CONSTRAINT fk_partes_id FOREIGN KEY (parte) 
       REFERENCES partes(idParte),
     CONSTRAINT ck_hora CHECK (horaSalida<horaLlegada)
@@ -101,11 +104,12 @@ CREATE TABLE albaranes
   
 CREATE TABLE avisos
   (
+    idAviso NUMBER(3) ,
     codAviso VARCHAR2 (20) NOT NULL,
     nombre VARCHAR2 (20) NOT NULL,
     descripcion VARCHAR2(500) NOT NULL,
     
-    CONSTRAINT pk_avisos PRIMARY KEY (codAviso)
+    CONSTRAINT pk_avisos PRIMARY KEY (idAviso)
   );
   
 
